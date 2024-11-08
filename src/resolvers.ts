@@ -2,6 +2,7 @@ import { PubSub } from "graphql-subscriptions";
 import { v4 as uuidv4 } from 'uuid';
 
 const pubsub = new PubSub();
+const RESOURCE_ADDED = "RESOURCE_ADDED";
 
 interface Resource {
   id: string;
@@ -26,15 +27,19 @@ const resolvers = {
     },
   },
   Mutation: {
-    addResource: (_: any, { name, type, status }: { name: string; type: string, status: string }) => {
+    addResource: async(_: any, { name, type, status }: { name: string; type: string, status: string }) => {
       const newResource = { id: uuidv4(), name, type, status };
       resources.push(newResource); // Assuming `resources` is an in-memory array
+
+      // Publish the new resource to the subscription
+      await pubsub.publish(RESOURCE_ADDED, { resourceAdded: newResource });
+
       return newResource;
     },
   },
   Subscription: {
-    resourceUpdated: {
-      subscribe: () => pubsub.asyncIterator("RESOURCE_UPDATED"),
+    resourceAdded: {
+      subscribe: () => pubsub.asyncIterator([RESOURCE_ADDED]),
     },
   },
 };

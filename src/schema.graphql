@@ -14,5 +14,6 @@ type Mutation {
 }
 
 type Subscription {
-  resourceUpdated: Resource
+  # resourceUpdated: Resource,
+  resourceAdded: Resource
 }
