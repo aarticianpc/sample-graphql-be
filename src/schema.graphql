@@ -1,0 +1,18 @@
+type Resource {
+  id: ID!
+  name: String!
+  type: String!
+  status: String!
+}
+
+type Query {
+  resources(filter: String, search: String): [Resource!]
+}
+
+type Mutation {
+  addResource(name: String!, type: String!, status: String!): Resource!
+}
+
+type Subscription {
+  resourceUpdated: Resource
+}
